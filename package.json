@@ -1,11 +1,11 @@
 {
 	"name": "perman",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"main": "dist",
 	"typings": "dist",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/barbarbar338/perman"
+		"url": "https://github.com/barbarbar338/perman.js"
 	},
 	"author": {
 		"email": "demirci.baris38@gmail.com",
@@ -15,7 +15,7 @@
 	"license": "GPL-3.0",
 	"description": "🔑 Permission management made easy",
 	"scripts": {
-		"test": "mocha -r ts-node/register tests/*.test.ts",
+		"test": "mocha -r ts-node/register tests/*test*.ts",
 		"prebuild": "rimraf dist",
 		"build": "tsc",
 		"format": "prettier --write .",

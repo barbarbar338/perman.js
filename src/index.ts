@@ -27,7 +27,7 @@ export class Perman<T extends string> {
 		if (!flags.length) return 0;
 
 		let res = 0;
-		for (const flag of flags) res |= this._FLAGS[flag] ?? 0;
+		for (const flag of flags) res |= this.get(flag);
 		return res;
 	};
 
@@ -44,14 +44,14 @@ export class Perman<T extends string> {
 
 		if (
 			flags.some(
-				(match) =>
-					(permission & this._FLAGS[match]) != this._FLAGS[match],
+				(match) => (permission & this.get(match)) != this.get(match),
 			)
 		)
 			return false;
 		return true;
 	};
 
+	public matchAll = this.match;
 	public hasAll = this.match;
 
 	public some = (permission: Permissions, flags: T[]): boolean => {
@@ -59,8 +59,7 @@ export class Perman<T extends string> {
 
 		if (
 			flags.some(
-				(match) =>
-					(permission & this._FLAGS[match]) == this._FLAGS[match],
+				(match) => (permission & this.get(match)) == this.get(match),
 			)
 		)
 			return true;
@@ -69,8 +68,22 @@ export class Perman<T extends string> {
 
 	public hasSome = this.some;
 
+	public hasNone = (permission: Permissions, flags: T[]): boolean => {
+		if (!flags.length) return true;
+
+		if (
+			flags.some(
+				(match) => (permission & this.get(match)) == this.get(match),
+			)
+		)
+			return false;
+		return true;
+	};
+
+	public none = this.hasNone;
+
 	public has = (permissions: Permissions, flag: Permissions | T): boolean => {
-		flag = typeof flag == "number" ? flag : this._FLAGS[flag];
+		flag = typeof flag == "number" ? flag : this.get(flag);
 		return (permissions & flag) == flag;
 	};
 
