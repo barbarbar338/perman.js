@@ -49,6 +49,16 @@ perman.has(user, "admin"); // false;
 perman.has(verified, "verified"); // true;
 perman.has(verified, "admin"); // false;
 perman.has(admin, "admin"); // true;
+
+// add permissions
+perman.has(user, "verified"); // false;
+user = perman.add(user, "verified");
+perman.has(user, "verified"); // true;
+
+// remove permissions
+perman.has(verified, "verified"); // true;
+verified = perman.remove(verified, "verified");
+perman.has(verified, "verified"); // false;
 ```
 
 # 📄 License
