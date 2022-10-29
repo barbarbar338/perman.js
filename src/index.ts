@@ -1,50 +1,32 @@
-export type Permissions = number;
+export type IFlagsType<T extends string, K> = {
+	[key in T]: K;
+};
 
-export class Perman<T extends string> {
-	private readonly _FLAGS: {
-		[key in T]: number;
-	};
+export class Permission<T extends string> {
+	constructor(
+		private readonly permission: number,
+		private readonly _FLAGS: IFlagsType<T, number>,
+	) {}
 
-	constructor(flags: T[]) {
-		this._FLAGS = flags.reduce((all, key, index) => {
-			const representation = 2 ** index;
+	private get = (flag: T): number => this._FLAGS[flag] ?? 0;
 
-			return {
-				...all,
-				[key]: representation,
-			};
-		}, {} as Record<T, Permissions>);
-	}
+	public toNumber = () => this.permission;
 
-	public static from = <T extends string>(flags: T[]): Perman<T> =>
-		new Perman(flags);
+	public deserialize = (): T[] => {
+		if (!this.permission) return [];
 
-	public keys = (): T[] => Object.keys(this._FLAGS) as T[];
-	public values = (): Permissions[] => Object.values(this._FLAGS);
-	public get = (flag: T): Permissions => this._FLAGS[flag] ?? 0;
-
-	public serialize = (flags: T[]): Permissions => {
-		if (!flags.length) return 0;
-
-		let res = 0;
-		for (const flag of flags) res |= this.get(flag);
-		return res;
-	};
-
-	public deserialize = (permissions: Permissions): T[] => {
-		if (!permissions) return [];
-
-		return Object.entries<Permissions>(this._FLAGS)
-			.filter((f) => f[1] === (f[1] & permissions))
+		return Object.entries<number>(this._FLAGS)
+			.filter((f) => f[1] === (f[1] & this.permission))
 			.map((f) => f[0]) as T[];
 	};
 
-	public match = (permission: Permissions, flags: T[]): boolean => {
+	public match = (flags: T[]): boolean => {
 		if (!flags.length) return true;
 
 		if (
 			flags.some(
-				(match) => (permission & this.get(match)) != this.get(match),
+				(match) =>
+					(this.permission & this.get(match)) != this.get(match),
 			)
 		)
 			return false;
@@ -54,12 +36,13 @@ export class Perman<T extends string> {
 	public matchAll = this.match;
 	public hasAll = this.match;
 
-	public some = (permission: Permissions, flags: T[]): boolean => {
+	public some = (flags: T[]): boolean => {
 		if (!flags.length) return true;
 
 		if (
 			flags.some(
-				(match) => (permission & this.get(match)) == this.get(match),
+				(match) =>
+					(this.permission & this.get(match)) == this.get(match),
 			)
 		)
 			return true;
@@ -68,12 +51,13 @@ export class Perman<T extends string> {
 
 	public hasSome = this.some;
 
-	public hasNone = (permission: Permissions, flags: T[]): boolean => {
+	public hasNone = (flags: T[]): boolean => {
 		if (!flags.length) return true;
 
 		if (
 			flags.some(
-				(match) => (permission & this.get(match)) == this.get(match),
+				(match) =>
+					(this.permission & this.get(match)) == this.get(match),
 			)
 		)
 			return false;
@@ -82,26 +66,88 @@ export class Perman<T extends string> {
 
 	public none = this.hasNone;
 
-	public has = (permissions: Permissions, flag: Permissions | T): boolean => {
-		flag = typeof flag == "number" ? flag : this.get(flag);
-		return (permissions & flag) == flag;
+	public has = (flag: number | T | Permission<T>): boolean => {
+		const check =
+			typeof flag == "string"
+				? this.get(flag)
+				: typeof flag == "number"
+				? flag
+				: flag.toNumber();
+		return (this.permission & check) == check;
 	};
 
 	public test = this.has;
 
-	public add = (permission: Permissions, flag: T): Permissions => {
-		const oldFlags = this.deserialize(permission);
+	public add = (flag: T): Permission<T> => {
+		const oldFlags = this.deserialize();
 		const newFlags = [...oldFlags, flag];
-		return this.serialize(newFlags as T[]);
+		return new Perman<T>(Object.keys(this._FLAGS) as T[]).serialize(
+			newFlags as T[],
+		);
 	};
 
-	public remove = (permission: Permissions, flag: T): Permissions => {
-		const oldFlags = this.deserialize(permission);
+	public remove = (flag: T): Permission<T> => {
+		const oldFlags = this.deserialize();
 		const newFlags = oldFlags.filter((f) => f !== flag);
-		return this.serialize(newFlags as T[]);
+		return new Perman<T>(Object.keys(this._FLAGS) as T[]).serialize(
+			newFlags as T[],
+		);
 	};
 
-	public full = (): Permissions => {
+	public equals = (permission: Permission<T>): boolean => {
+		return this.permission == permission.toNumber();
+	};
+
+	public sum(...permissions: Permission<T>[]): Permission<T> {
+		const newPermission = permissions.reduce(
+			(acc, p) => acc | p.toNumber(),
+			this.permission,
+		);
+		return new Permission<T>(newPermission, this._FLAGS);
+	}
+}
+
+export class Perman<T extends string> {
+	private readonly _FLAGS: IFlagsType<T, Permission<T>>;
+	private readonly _FLAGS_PASS: IFlagsType<T, number>;
+
+	constructor(flags: T[]) {
+		this._FLAGS_PASS = flags.reduce((all, key, index) => {
+			const representation = 2 ** index;
+
+			return {
+				...all,
+				[key]: representation,
+			};
+		}, {} as Record<T, number>);
+
+		this._FLAGS = flags.reduce((all, key, index) => {
+			const representation = 2 ** index;
+
+			return {
+				...all,
+				[key]: new Permission(representation, this._FLAGS_PASS),
+			};
+		}, {} as Record<T, Permission<T>>);
+	}
+
+	public static from = <T extends string>(flags: T[]): Perman<T> =>
+		new Perman(flags);
+
+	public keys = (): T[] => Object.keys(this._FLAGS) as T[];
+	public values = (): Permission<T>[] => Object.values(this._FLAGS);
+	public get = (flag: T): Permission<T> =>
+		this._FLAGS[flag] ?? new Permission(0, this._FLAGS_PASS);
+
+	public serialize = (flags: T[]): Permission<T> => {
+		if (!flags.length) return new Permission(0, this._FLAGS_PASS);
+
+		let res = 0;
+		for (const flag of flags) res |= this.get(flag).toNumber();
+		return new Permission(res, this._FLAGS_PASS);
+	};
+
+	public full = (): Permission<T> => {
 		const allFlags = this.keys();
 		const permissions = this.serialize(allFlags);
 		return permissions;
