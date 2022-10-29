@@ -3,10 +3,14 @@ export type IFlagsType<T extends string, K> = {
 };
 
 export class Permission<T extends string> {
+	private readonly perman: Perman<T>;
+
 	constructor(
 		private readonly permission: number,
 		private readonly _FLAGS: IFlagsType<T, number>,
-	) {}
+	) {
+		this.perman = new Perman<T>(Object.keys(this._FLAGS) as T[]);
+	}
 
 	private get = (flag: T): number => this._FLAGS[flag] ?? 0;
 
@@ -81,17 +85,13 @@ export class Permission<T extends string> {
 	public add = (flag: T): Permission<T> => {
 		const oldFlags = this.deserialize();
 		const newFlags = [...oldFlags, flag];
-		return new Perman<T>(Object.keys(this._FLAGS) as T[]).serialize(
-			newFlags as T[],
-		);
+		return this.perman.serialize(newFlags as T[]);
 	};
 
 	public remove = (flag: T): Permission<T> => {
 		const oldFlags = this.deserialize();
 		const newFlags = oldFlags.filter((f) => f !== flag);
-		return new Perman<T>(Object.keys(this._FLAGS) as T[]).serialize(
-			newFlags as T[],
-		);
+		return this.perman.serialize(newFlags as T[]);
 	};
 
 	public equals = (permission: Permission<T>): boolean => {

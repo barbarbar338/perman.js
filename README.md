@@ -33,8 +33,6 @@ Permission management made easy
 
 # 🤓 Usage
 
-See [API](#-api) for all methods
-
 ```js
 import { Perman } from "perman";
 
@@ -44,21 +42,21 @@ const user = perman.serialize(["user"]);
 const verified = perman.serialize(["user", "verified"]);
 const admin = perman.serialize(["user", "admin"]);
 
-perman.has(user, "user"); // true
-perman.has(user, "admin"); // false;
-perman.has(verified, "verified"); // true;
-perman.has(verified, "admin"); // false;
-perman.has(admin, "admin"); // true;
+user.has("user"); // true
+user.has("admin"); // false;
+verified.has("verified"); // true;
+verified.has("admin"); // false;
+admin.has("admin"); // true;
 
 // add permissions
-perman.has(user, "verified"); // false;
-user = perman.add(user, "verified");
-perman.has(user, "verified"); // true;
+user.has("verified"); // false;
+user = user.add("verified");
+user.has("verified"); // true;
 
 // remove permissions
-perman.has(verified, "verified"); // true;
-verified = perman.remove(verified, "verified");
-perman.has(verified, "verified"); // false;
+verified.has("verified"); // true;
+verified = verified.remove("verified");
+verified.has("verified"); // false;
 ```
 
 # 📄 License
@@ -86,28 +84,4 @@ Give a ⭐️ if this project helped you!
 
 -   Mail: demirci.baris38@gmail.com
 -   Discord: https://discord.gg/BjEJFwh
--   Instagram: https://www.instagram.com/ben_baris.d/
 -   Webpage: https://338.rocks
-
-# 📜 API
-
-| Method                        | Description                                                                         | Usage                                                       | Output     |
-| ----------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
-| `from` (static)               | Creates a new Perman instance                                                       | `<Perman>.from(flags: string[])`                            | `Perman`   |
-| `keys`                        | Returns all flag names                                                              | `perman.keys()`                                             | `string[]` |
-| `values`                      | Returns all flag values                                                             | `perman.values()`                                           | `number[]` |
-| `get`                         | Returns the numeric value of flag                                                   | `perman.get(flag: string)`                                  | `number`   |
-| `serialize`                   | Serializes the flags                                                                | `perman.serialize(flags: string[])`                         | `number`   |
-| `deserialize`                 | Deserializes the permission                                                         | `perman.deserialize(permissions: number)`                   | `string[]` |
-| `match`                       | Matches permissions with flags, if permissions has all flags, returns true          | `perman.match(permissions: number, flags: string[])`        | `boolean`  |
-| `matchAll` (alias of `match`) | Matches permissions with flags, if permissions has all flags, returns true          | `perman.matchAll(permissions: number, flags: string[])`     | `boolean`  |
-| `hasAll` (alias of `match`)   | Matches permissions with flags, if permissions has all flags, returns true          | `perman.hasAll(permissions: number, flags: string[])`       | `boolean`  |
-| `some`                        | Matches permissions with flags, if permissions has at least one flag, returns true  | `perman.some(permissions: number, flags: string[])`         | `boolean`  |
-| `hasSome` (alias of `some`)   | Matches permissions with flags, if permissions has at least one flag, returns true  | `perman.hasSome(permissions: number, flags: string[])`      | `boolean`  |
-| `hasNone`                     | Matches permissions with flags, if permissions has at least one flag, returns false | `perman.hasNone(permissions: number, flags: string[])`      | `boolean`  |
-| `none` (alias of `hasNone`)   | Matches permissions with flags, if permissions has at least one flag, returns false | `perman.hasNone(permissions: number, flags: string[])`      | `boolean`  |
-| `has`                         | Checks if the given permission is granted                                           | `perman.has(permission: number, flag: (number or string))`  | `boolean`  |
-| `test` (alias of `has`)       | Checks if the given permission is granted                                           | `perman.test(permission: number, flag: (number or string))` | `boolean`  |
-| `add`                         | Adds a new flag to given permission                                                 | `perman.add(permission: number, flag: string)`              | `number`   |
-| `remove`                      | Removes a flag from given permission                                                | `perman.remove(permission: number, flag: string)`           | `number`   |
-| `full`                        | Creates a permission with all flags                                                 | `perman.full()`                                             | `number`   |
