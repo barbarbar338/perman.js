@@ -82,15 +82,15 @@ export class Permission<T extends string> {
 
 	public test = this.has;
 
-	public add = (flag: T): Permission<T> => {
+	public add = (...flags: T[]): Permission<T> => {
 		const oldFlags = this.deserialize();
-		const newFlags = [...oldFlags, flag];
+		const newFlags = Array.from(new Set([...oldFlags, ...flags]));
 		return this.perman.serialize(newFlags as T[]);
 	};
 
-	public remove = (flag: T): Permission<T> => {
+	public remove = (...flags: T[]): Permission<T> => {
 		const oldFlags = this.deserialize();
-		const newFlags = oldFlags.filter((f) => f !== flag);
+		const newFlags = oldFlags.filter((f) => !flags.some((flag) => f == flag));
 		return this.perman.serialize(newFlags as T[]);
 	};
 
