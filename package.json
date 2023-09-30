@@ -19,15 +19,15 @@
 		"build": "tsc",
 		"format": "prettier --write .",
 		"format:watch": "onchange . -- prettier --write {{changed}}",
-		"update": "taze major -w && yarn"
+		"update": "taze latest -w"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.7",
+		"@types/node": "^20.7.2",
 		"onchange": "^7.1.0",
-		"prettier": "^2.7.1",
-		"taze": "^0.8.3",
+		"prettier": "^3.0.3",
+		"taze": "^0.11.3",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.8.4"
+		"typescript": "^5.2.2"
 	},
 	"keywords": [
 		"perm",
