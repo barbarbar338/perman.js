@@ -110,32 +110,14 @@ export class Permission<T extends string> {
 }
 
 export class Perman<T extends string> {
-	private readonly _FLAGS: IFlagsType<T, Permission<T>>;
-	private readonly _FLAGS_PASS: IFlagsType<T, number>;
+	private readonly _FLAGS: IFlagsType<T, number>;
 
 	constructor(flags: T[]) {
-		this._FLAGS_PASS = flags.reduce(
-			(all, key, index) => {
-				const representation = 2 ** index;
-
-				return {
-					...all,
-					[key]: representation,
-				};
-			},
-			{} as Record<T, number>,
-		);
-
 		this._FLAGS = flags.reduce(
 			(all, key, index) => {
-				const representation = 2 ** index;
-
-				return {
-					...all,
-					[key]: new Permission(representation, this._FLAGS_PASS),
-				};
+				return Object.assign(all, { [key]: 2 ** index });
 			},
-			{} as Record<T, Permission<T>>,
+			{} as Record<T, number>,
 		);
 	}
 
@@ -145,18 +127,20 @@ export class Perman<T extends string> {
 	public keys = (): T[] => Object.keys(this._FLAGS) as T[];
 	public values = (): Permission<T>[] => Object.values(this._FLAGS);
 	public get = (flag: T): Permission<T> =>
-		this._FLAGS[flag] ?? new Permission(0, this._FLAGS_PASS);
+		this._FLAGS[flag]
+			? new Permission(this._FLAGS[flag], this._FLAGS)
+			: new Permission(0, this._FLAGS);
 
 	public serialize = (flags: T[]): Permission<T> => {
-		if (!flags.length) return new Permission(0, this._FLAGS_PASS);
+		if (!flags.length) return new Permission(0, this._FLAGS);
 
 		let res = 0;
 		for (const flag of flags) res |= this.get(flag).toNumber();
-		return new Permission(res, this._FLAGS_PASS);
+		return new Permission(res, this._FLAGS);
 	};
 
 	public fromBit = (bit: number): Permission<T> => {
-		return new Permission(bit, this._FLAGS_PASS);
+		return new Permission(bit, this._FLAGS);
 	};
 
 	public full = (): Permission<T> => {
