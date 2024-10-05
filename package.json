@@ -1,6 +1,6 @@
 {
 	"name": "perman",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"main": "dist",
 	"typings": "dist",
 	"repository": {
@@ -22,12 +22,12 @@
 		"update": "taze latest -w"
 	},
 	"devDependencies": {
-		"@types/node": "^20.7.2",
+		"@types/node": "^22.7.4",
 		"onchange": "^7.1.0",
-		"prettier": "^3.0.3",
-		"taze": "^0.11.3",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.2.2"
+		"prettier": "^3.3.3",
+		"taze": "^0.17.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.2"
 	},
 	"keywords": [
 		"perm",

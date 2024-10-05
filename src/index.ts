@@ -75,8 +75,8 @@ export class Permission<T extends string> {
 			typeof flag == "string"
 				? this.get(flag)
 				: typeof flag == "number"
-				? flag
-				: flag.toNumber();
+					? flag
+					: flag.toNumber();
 		return (this.permission & check) == check;
 	};
 
@@ -90,7 +90,9 @@ export class Permission<T extends string> {
 
 	public remove = (...flags: T[]): Permission<T> => {
 		const oldFlags = this.deserialize();
-		const newFlags = oldFlags.filter((f) => !flags.some((flag) => f == flag));
+		const newFlags = oldFlags.filter(
+			(f) => !flags.some((flag) => f == flag),
+		);
 		return this.perman.serialize(newFlags as T[]);
 	};
 
@@ -112,23 +114,29 @@ export class Perman<T extends string> {
 	private readonly _FLAGS_PASS: IFlagsType<T, number>;
 
 	constructor(flags: T[]) {
-		this._FLAGS_PASS = flags.reduce((all, key, index) => {
-			const representation = 2 ** index;
+		this._FLAGS_PASS = flags.reduce(
+			(all, key, index) => {
+				const representation = 2 ** index;
 
-			return {
-				...all,
-				[key]: representation,
-			};
-		}, {} as Record<T, number>);
+				return {
+					...all,
+					[key]: representation,
+				};
+			},
+			{} as Record<T, number>,
+		);
 
-		this._FLAGS = flags.reduce((all, key, index) => {
-			const representation = 2 ** index;
+		this._FLAGS = flags.reduce(
+			(all, key, index) => {
+				const representation = 2 ** index;
 
-			return {
-				...all,
-				[key]: new Permission(representation, this._FLAGS_PASS),
-			};
-		}, {} as Record<T, Permission<T>>);
+				return {
+					...all,
+					[key]: new Permission(representation, this._FLAGS_PASS),
+				};
+			},
+			{} as Record<T, Permission<T>>,
+		);
 	}
 
 	public static from = <T extends string>(flags: T[]): Perman<T> =>
@@ -145,6 +153,10 @@ export class Perman<T extends string> {
 		let res = 0;
 		for (const flag of flags) res |= this.get(flag).toNumber();
 		return new Permission(res, this._FLAGS_PASS);
+	};
+
+	public fromBit = (bit: number): Permission<T> => {
+		return new Permission(bit, this._FLAGS_PASS);
 	};
 
 	public full = (): Permission<T> => {
