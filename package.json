@@ -25,6 +25,7 @@
 		"@types/node": "^22.7.4",
 		"onchange": "^7.1.0",
 		"prettier": "^3.3.3",
+		"rimraf": "^6.0.1",
 		"taze": "^0.17.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.6.2"
@@ -43,4 +44,3 @@
 		"binary"
 	]
 }
-
