@@ -1,6 +1,6 @@
 {
 	"name": "perman",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"main": "dist",
 	"typings": "dist",
 	"repository": {
@@ -8,7 +8,7 @@
 		"url": "https://github.com/barbarbar338/perman.js"
 	},
 	"author": {
-		"email": "demirci.baris38@gmail.com",
+		"email": "hi@338.rocks",
 		"name": "Barış DEMİRCİ",
 		"url": "https://338.rocks"
 	},
@@ -22,13 +22,13 @@
 		"update": "taze latest -w"
 	},
 	"devDependencies": {
-		"@types/node": "^22.7.4",
+		"@types/node": "^25.0.10",
 		"onchange": "^7.1.0",
-		"prettier": "^3.3.3",
-		"rimraf": "^6.0.1",
-		"taze": "^0.17.2",
+		"prettier": "^3.8.1",
+		"rimraf": "^6.1.2",
+		"taze": "^19.9.2",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.6.2"
+		"typescript": "^5.9.3"
 	},
 	"keywords": [
 		"perm",
@@ -44,4 +44,3 @@
 		"binary"
 	]
 }
-
